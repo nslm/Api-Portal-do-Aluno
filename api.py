@@ -2,8 +2,6 @@ from fastapi import FastAPI
 import re
 import werkzeug
 from pydantic import BaseModel
-from config import matricula
-from config import senha
 werkzeug.cached_property = werkzeug.utils.cached_property
 from robobrowser import RoboBrowser
 
@@ -21,15 +19,15 @@ class login(BaseModel):
 
 
 @app.post("/login")
-async def isLogin(login:login):
+async def Login(login:login):
 
     url = 'https://portalence.ibge.gov.br/gcad-aluno/login.jsf'
     br = RoboBrowser()
     br.open(url)
 
     form = br.get_form()
-    form['login-form:matricula-aluno'] = matricula
-    form['login-form:j_idt22'] = senha
+    form['login-form:matricula-aluno'] = login.matricula
+    form['login-form:j_idt22'] = login.senha
     br.submit_form(form)
     page = str(br.parsed())
     return {'detail':page} #{'pagina': page}
