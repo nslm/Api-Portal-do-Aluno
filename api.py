@@ -5,23 +5,34 @@ from pydantic import BaseModel
 werkzeug.cached_property = werkzeug.utils.cached_property
 from robobrowser import RoboBrowser
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return 'minha primeira api'
-
+url = 'https://portalence.ibge.gov.br/gcad-aluno/'
 
 class login(BaseModel):
     matricula: str 
     senha: str
 
 
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return 'Api simples para scrap do portal do aluno da ence'
+
+@app.post("/")
+async def login(login:login):
+    br = RoboBrowser()
+    br.open(url)
+    form = br.get_form()
+    form['login-form:matricula-aluno'] = login.matricula
+    form['login-form:j_idt22'] = login.senha
+    br.submit_form(form)
+    page = str(br.parsed())
+
+
 @app.post("/login")
 async def Login(login:login):
 
-    url = 'https://portalence.ibge.gov.br/gcad-aluno/login.jsf'
     br = RoboBrowser()
     br.open(url)
 
@@ -30,11 +41,10 @@ async def Login(login:login):
     form['login-form:j_idt22'] = login.senha
     br.submit_form(form)
     page = str(br.parsed())
-    return {'detail':page} #{'pagina': page}
-    #if 'Login e senha de usuário não conferem no sistema.' in page:
-        #return False
-    #return True
+    return page 
 
-
+@app.get("/provas")
+async def provas():
+    
 
 
