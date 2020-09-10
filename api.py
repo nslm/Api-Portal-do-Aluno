@@ -36,8 +36,11 @@ async def root():
 
 
 @app.post("/login")
-async def login(login:login):
-    return Login(login.matricula, login.senha)
+async def login(login):
+    params = login.split(';')
+    matricula = params[0]
+    senha = params[1]
+    return Login(matricula, senha)
 
 
 
