@@ -1,26 +1,14 @@
-import re
-import time
-import werkzeug
-import sqlite3
-
-werkzeug.cached_property = werkzeug.utils.cached_property
-
-from uuid import uuid4
 from fastapi import FastAPI
-from selenium import webdriver
 from pydantic import BaseModel
-from robobrowser import RoboBrowser
-from bs4 import BeautifulSoup as bf
-
 
 from notas import Notas
 from login import Login
 
 
-
-class login(BaseModel):
+class login_form(BaseModel):
     matricula: str 
     senha: str
+
 
 
 
@@ -36,17 +24,14 @@ async def root():
 
 
 @app.post("/login")
-async def login(login):
-    params = login.split(';')
-    matricula = params[0]
-    senha = params[1]
-    return Login(matricula, senha)
+async def login(login:login_form):
+    return Login(login.matricula, login.senha)
 
 
 
 @app.post('/notas')
-async def notas(token):
-    return Notas(token)
+async def notas(login:login_form):
+    return Notas(login.matricula, login.senha)
 
 
 
