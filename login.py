@@ -28,4 +28,4 @@ def Login(matricula,senha):
         name = name.lower()
 
 
-    return { 'Status':loged, 'name':name}
+    return { 'status':loged, 'name':name}
